@@ -14,7 +14,7 @@
 # $2 = subcommand to get version (defaults to --version)
 # $3 = command name in version command output (defaults to executable name)
 # $4 = minimum version (defaults to any-version)
-# $5 = package manager (brew, gem, assert, or other script; defaults to brew)
+# $5 = package manager (brew, apt-get, gem, assert, or other script; defaults to brew)
 # $6 = name of package for package manager (defaults to executable name)
 
 # Preconditions:
@@ -46,10 +46,19 @@ if [[ $min_version != any-version ]] && ! (echo "$min_version" | egrep -q "^[0-9
     echo "[ensure-installed] Fatal error: the minimum version string is malformed."
     exit 1
 fi
-package_manager="${5:-brew}"
+
+##default to apt-get if we are on linux##
+if [[ "$OSTYPE" = "darwin"* ]]; then
+    package_manager="${5:-brew}"
+else
+    package_manager="${5:-apt-get}"
+fi
+
 package_name="${6:-$executable}"
 if [[ $package_manager == brew ]]; then
     install_command="brew install $package_name"
+elif [[ $package_manager == apt-get ]]; then
+    install_command="sudo apt-get install $package_name"
 elif [[ $package_manager == gem ]]; then
     install_command="sudo gem install $package_name"
 elif [[ $package_manager == assert ]]; then

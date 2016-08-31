@@ -46,7 +46,7 @@ if [[ $setup ]]; then
     if [[ -d $real || -L $real && ! -e $real ]]; then
         echo "[ensure-symlinked] Your $real appears to be either a directory or an invalid symlink."
         echo "[ensure-symlinked] Moving it to originals/$uuid as $real.real."
-        mv "$real" "originals/$uuid/$real.real"
+        sudo mv "$real" "originals/$uuid/$real.real"
     fi
     if [[ -e $real ]]; then
         echo "[ensure-symlinked] $real already exists. If you would like to set it up again, please remove it and re-run setup.sh."
@@ -93,7 +93,7 @@ fi
 
 move_existing() {
     echo "[ensure-symlinked] Moving the existing version to originals/$uuid/${link##*/}."
-    mv "$link" "originals/$uuid/${link##*/}"
+    sudo mv "$link" "originals/$uuid/${link##*/}"
 }
 
 ### Main logic ###
@@ -122,7 +122,7 @@ if [[ $real ]]; then
             echo "[ensure-symlinked] $link does not exist, and needs to be created."
         fi
         echo "[ensure-symlinked] Creating symlink from $link to $real."
-        ln -s "$real" "$link"
+        sudo ln -s "$real" "$link"
     fi
 else
     if [[ -e $link || -L $link ]]; then

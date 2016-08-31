@@ -11,6 +11,8 @@ if [[ $0 != $BASH_SOURCE ]]; then
     return 1 2>/dev/null || exit 1
 fi
 
+
+
 ### Script environment ###
 
 set -e
@@ -33,19 +35,42 @@ handle_error() {
 
 trap handle_error EXIT
 
-### Compute features ###
+### Linux or Mac? ###
+##If we are not on a mac, we assume that we are on linux
 
-specs=(
-    "brew"
-    "wget -> brew"
-    "git"
-    "zsh -> brew"
-    "tmux -> brew"
-    "leiningen -> brew"
-    "emacs -> wget"
-    "tree -> brew"
-    "tmuxinator -> tmux"
-)
+if [[ "$OSTYPE" = "darwin"* ]]; then
+    echo "We have detected you are using OSX"
+else
+    echo "We have detected you are using LINUX"
+fi
+
+if [[ "$OSTYPE" = "darwin"* ]]; then
+    specs=(
+        "brew"
+        "wget -> brew"
+        "git"
+        "zsh -> brew"
+        "tmux -> brew"
+        "leiningen -> brew"
+        "emacs -> wget"
+        "tree -> brew"
+        "tmuxinator -> tmux"
+    )
+else
+    specs=(
+        "apt-get"
+        "wget -> apt-get"
+        "git"
+        "zsh -> apt-get"
+        "tmux -> apt-get"
+        "leiningen -> apt-get"
+        "emacs -> apt-get"
+        "tree -> apt-get"
+        "tmuxinator -> tmux"
+    )
+fi
+
+### Compute features ###
 
 source compute-features.sh
 
@@ -74,10 +99,17 @@ echo "[setup] Setting up raxod502/dotfiles. Prepare to be amazed."
 
 ### Bootstrapping ###
 
-./ensure-xcode-cl-tools-installed.sh
-
-if feature brew; then
-    ./ensure-installed.sh brew --version Homebrew any-version ./install-homebrew.sh
+## Install base dev / package managers based on OS ##
+## xcode is only required on macs ##
+if [[ "$OSTYPE" = "darwin"* ]]; then
+    ./ensure-xcode-cl-tools-installed.sh
+    if feature brew; then
+        ./ensure-installed.sh brew --version Homebrew any-version ./install-homebrew.sh
+    fi
+else
+    if feature apt-get; then
+        ./ensure-installed.sh apt-get --version apt any-version assert
+    fi
 fi
 
 if feature wget; then
@@ -96,7 +128,8 @@ fi
 ### Zsh ###
 
 if feature zsh; then
-    ./ensure-installed.sh zsh --version zsh 5.2
+    ./ensure-installed.sh zsh --version zsh 5.1
+    ./ensure-installed.sh finger #dependency for ./ensure-login-shell-set.sh
     ./ensure-login-shell-set.sh
     # $SHELL should be set by zsh in a new shell session, but some
     # programs don't bother to check the login shell and instead just
@@ -125,15 +158,26 @@ fi
 ### Leiningen ###
 
 if feature leiningen; then
-    ./ensure-installed.sh javac -version javac 1.6 ./install-jdk.sh
-    ./ensure-installed.sh lein --version Leiningen 2.6.1 brew leiningen
+    if [[ "$OSTYPE" = "darwin"* ]]; then
+        ./ensure-installed.sh javac -version javac 1.6 ./install-jdk-osx.sh
+        ./ensure-installed.sh lein --version Leiningen 2.6.1 brew leiningen
+    else
+        ./ensure-installed.sh javac -version javac 1.6 assert
+        #INSTALL LEININGEN ON LINUX, replace with ensure-installed call
+        ./ensure-installed.sh lein --version Leiningen 2.6.1 ./install-lein-linux.sh
+    fi
     ./ensure-symlinked.sh ~/.lein/profiles.clj ../profiles.clj
 fi
 
 ### Emacs ###
 
 if feature emacs; then
-    ./ensure-installed.sh emacs --version "GNU Emacs" 24.5.1 ./install-emacs.sh
+    if [[ "$OSTYPE" = "darwin"* ]]; then
+        ./ensure-installed.sh emacs --version "GNU Emacs" 24.5.1 ./install-emacs-osx.sh
+    else
+        ./ensure-installed.sh emacs --version "GNU Emacs" 24.5.1 apt-get emacs-24
+    fi
+
     if [[ /usr/local/bin/emacs -ef emacs ]]; then
         ./ensure-symlinked.sh /usr/local/bin/emacsw emacsw
     else
