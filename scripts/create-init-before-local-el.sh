@@ -74,7 +74,6 @@ if (echo "$answer" | egrep -qi "^y"); then
     if [[ $include_contents ]]; then
         contents="$contents"$'\n'"$include_contents"
     fi
-
 fi
 
 echo "[create-init-before-local-el] There are a number of configurable parameters. You can configure them or leave them at the defaults for now."

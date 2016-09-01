@@ -150,7 +150,7 @@ fi
 ### Tmux ###
 
 if feature tmux; then
-    ./ensure-installed.sh tmux -V tmux 2.2
+    ./ensure-installed.sh tmux -V tmux 2.1
     ./ensure-symlinked.sh ~/.tmux.conf ../.tmux.conf
     ./ensure-symlinked.sh ~/.tmux.local.conf ../../dotfiles-local/.tmux.local.conf ./create-tmux-local-conf.sh
 fi
@@ -162,7 +162,7 @@ if feature leiningen; then
         ./ensure-installed.sh javac -version javac 1.6 ./install-jdk-osx.sh
         ./ensure-installed.sh lein --version Leiningen 2.6.1 brew leiningen
     else
-        ./ensure-installed.sh javac -version javac 1.6 assert
+        ./ensure-installed.sh javac -version javac 1.6 ./install-jdk8-linux.sh
         #INSTALL LEININGEN ON LINUX, replace with ensure-installed call
         ./ensure-installed.sh lein --version Leiningen 2.6.1 ./install-lein-linux.sh
     fi
@@ -175,7 +175,7 @@ if feature emacs; then
     if [[ "$OSTYPE" = "darwin"* ]]; then
         ./ensure-installed.sh emacs --version "GNU Emacs" 24.5.1 ./install-emacs-osx.sh
     else
-        ./ensure-installed.sh emacs --version "GNU Emacs" 24.5.1 apt-get emacs-24
+        ./ensure-installed.sh emacs --version "GNU Emacs" 24.5.1 apt-get emacs24
     fi
 
     if [[ /usr/local/bin/emacs -ef emacs ]]; then
@@ -201,6 +201,7 @@ if feature tree; then
 fi
 
 if feature tmuxinator; then
+    ./ensure-installed.sh gem --version gem any-version apt-get rubygems
     ./ensure-installed.sh tmuxinator version tmuxinator 0.8.1 gem
 fi
 
