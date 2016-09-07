@@ -122,30 +122,30 @@ present."
 ;;; Based on https://gist.github.com/the-kenny/267162
 ;;; Modified based on http://emacs.stackexchange.com/q/26471/12534
 
-(setq last-paste-to-osx nil)
+;; (setq last-paste-to-osx nil)
 
-(defun copy-from-osx ()
-  (let ((copied-text (shell-command-to-string "pbpaste")))
-    (unless (string= copied-text last-paste-to-osx)
-      copied-text)))
+;; (defun copy-from-osx ()
+;;   (let ((copied-text (shell-command-to-string "pbpaste")))
+;;     (unless (string= copied-text last-paste-to-osx)
+;;       copied-text)))
 
-(defun paste-to-osx (text &optional push)
-  (let ((process-connection-type nil))
-    (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
-      (process-send-string proc text)
-      (process-send-eof proc)))
-  (setq last-paste-to-osx text))
+;; (defun paste-to-osx (text &optional push)
+;;   (let ((process-connection-type nil))
+;;     (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
+;;       (process-send-string proc text)
+;;       (process-send-eof proc)))
+;;   (setq last-paste-to-osx text))
 
-(setq interprogram-cut-function 'paste-to-osx)
-(setq interprogram-paste-function 'copy-from-osx)
+;; (setq interprogram-cut-function 'paste-to-osx)
+;; (setq interprogram-paste-function 'copy-from-osx)
 
-;;; If you have something on the system clipboard, and then kill something in
-;;; Emacs, then by default whatever you had on the system clipboard is gone
-;;; and there is no way to get it back. Setting the following option makes it
-;;; so that when you kill something in Emacs, whatever was previously on the
-;;; system clipboard is pushed into the kill ring. This way, you can paste it
-;;; by doing C-y M-y.
-(setq save-interprogram-paste-before-kill t)
+;; ;;; If you have something on the system clipboard, and then kill something in
+;; ;;; Emacs, then by default whatever you had on the system clipboard is gone
+;; ;;; and there is no way to get it back. Setting the following option makes it
+;; ;;; so that when you kill something in Emacs, whatever was previously on the
+;; ;;; system clipboard is pushed into the kill ring. This way, you can paste it
+;; ;;; by doing C-y M-y.
+;; (setq save-interprogram-paste-before-kill t)
 
 ;;;; File saving and loading
 
