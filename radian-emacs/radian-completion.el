@@ -176,36 +176,35 @@ This is an `:around' advice for `counsel-M-x'."
 ;; done by the Counsel library. (It also adds a few new commands, such
 ;; as `counsel-git-ag'.)
 (use-package counsel
-  :bind (;; Use Counsel for common Emacs commands.
-         ("M-x" . counsel-M-x)
-         ("C-x C-f" . counsel-find-file)
-         ("C-h f" . counsel-describe-function)
-         ("C-h v" . counsel-describe-variable)
-         ("C-h l" . counsel-load-library)
-         ("C-h C-l" . counsel-find-library)
-         ("C-h S" . counsel-info-lookup-symbol)
-         ("C-x 8 RET" . counsel-unicode-char)
+             :bind (;; Use Counsel for common Emacs commands.
+                    ("M-x" . counsel-M-x)
+                    ("C-h f" . counsel-describe-function)
+                    ("C-h v" . counsel-describe-variable)
+                    ("C-h l" . counsel-load-library)
+                    ("C-h C-l" . counsel-find-library)
+                    ("C-h S" . counsel-info-lookup-symbol)
+                    ("C-x 8 RET" . counsel-unicode-char)
 
-         ;; Introduce a few new commands that use Counsel. The
-         ;; bindings are suggested by the README [1].
-         ;;
-         ;; [1]: https://github.com/abo-abo/swiper
-         ("C-c g" . counsel-git)
-         ("C-c j" . counsel-git-grep)
-         ("C-c k" . counsel-ag)
+                    ;; Introduce a few new commands that use Counsel. The
+                    ;; bindings are suggested by the README [1].
+                    ;;
+                    ;; [1]: https://github.com/abo-abo/swiper
+                    ("C-c g" . counsel-git)
+                    ("C-c j" . counsel-git-grep)
+                    ("C-c k" . counsel-ag)
 
-         ;; Interactively select a kill to yank using ivy, when using
-         ;; `yank-pop'.
-         ("M-y" . counsel-yank-pop)
+                    ;; Interactively select a kill to yank using ivy, when using
+                    ;; `yank-pop'.
+                    ("M-y" . counsel-yank-pop)
 
-         ;; After you have pressed M-:, you can use C-r to select a
-         ;; previous entry using Counsel.
-         :map read-expression-map
-         ("C-r" . counsel-expression-history))
-  :config
+                    ;; After you have pressed M-:, you can use C-r to select a
+                    ;; previous entry using Counsel.
+                    :map read-expression-map
+                    ("C-r" . counsel-expression-history))
+             :config
 
-  ;; If there is a valid file at point, pre-select in C-x C-f.
-  (setq counsel-find-file-at-point t))
+             ;; If there is a valid file at point, pre-select in C-x C-f.
+             (setq counsel-find-file-at-point t))
 
 ;; Remembers your choices in completion menus.
 (use-package historian

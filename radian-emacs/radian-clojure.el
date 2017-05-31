@@ -9,44 +9,44 @@
 
 ;; Provides indentation and syntax highlighting for Clojure code.
 (use-package clojure-mode
-  :defer-install t
-  :mode (("\\.\\(clj\\|dtm\\|edn\\)\\'" . clojure-mode)
-         ("\\(?:build\\|profile\\)\\.boot\\'" . clojure-mode))
-  :init
+             :defer-install t
+             :mode (("\\.\\(clj\\|dtm\\|edn\\)\\'" . clojure-mode)
+                    ("\\(?:build\\|profile\\)\\.boot\\'" . clojure-mode))
+             :init
 
-  ;; We define some patches after clojure-mode is loaded. We need to
-  ;; make sure el-patch knows how to find these patches.
+             ;; We define some patches after clojure-mode is loaded. We need to
+             ;; make sure el-patch knows how to find these patches.
 
-  (defun radian--enable-clojure-mode-patches ()
-    (require 'clojure-mode)
-    (radian-clojure-strings-as-docstrings-mode 1))
+             (defun radian--enable-clojure-mode-patches ()
+               (require 'clojure-mode)
+               (radian-clojure-strings-as-docstrings-mode 1))
 
-  (defun radian--disable-clojure-mode-patches ()
-    (radian-clojure-strings-as-docstrings-mode -1))
+             (defun radian--disable-clojure-mode-patches ()
+               (radian-clojure-strings-as-docstrings-mode -1))
 
-  (add-hook 'el-patch-pre-validate-hook
-            #'radian--enable-clojure-mode-patches)
-  (add-hook 'el-patch-post-validate-hook
-            #'radian--disable-clojure-mode-patches)
+             (add-hook 'el-patch-pre-validate-hook
+                       #'radian--enable-clojure-mode-patches)
+             (add-hook 'el-patch-post-validate-hook
+                       #'radian--disable-clojure-mode-patches)
 
-  :bind (;; Make sure electric indentation *always* works. For some
-         ;; reason, if this is omitted, electric indentation works most
-         ;; of the time, but it fails inside Clojure docstrings. (TAB
-         ;; will add the requisite two spaces, but you shouldn't have to
-         ;; do this manually after pressing RET.) I'd like to find a more
-         ;; elegant solution to this problem. See [1].
-         ;;
-         ;; <return> is for windowed Emacs; RET is for terminal Emacs.
-         ;;
-         ;; [1]: https://github.com/raxod502/radian/issues/2
-         :map clojure-mode-map
-         ("<return>" . newline-and-indent)
-         ("RET" . newline-and-indent))
-  :config
+             :bind (;; Make sure electric indentation *always* works. For some
+                    ;; reason, if this is omitted, electric indentation works most
+                    ;; of the time, but it fails inside Clojure docstrings. (TAB
+                    ;; will add the requisite two spaces, but you shouldn't have to
+                    ;; do this manually after pressing RET.) I'd like to find a more
+                    ;; elegant solution to this problem. See [1].
+                    ;;
+                    ;; <return> is for windowed Emacs; RET is for terminal Emacs.
+                    ;;
+                    ;; [1]: https://github.com/raxod502/radian/issues/2
+                    :map clojure-mode-map
+                         ("<return>" . newline-and-indent)
+                         ("RET" . newline-and-indent))
+             :config
 
-  ;; Enable Paredit and Aggressive Indent in Clojure mode.
-  (add-hook 'clojure-mode-hook #'paredit-mode)
-  (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
+             ;; Enable Paredit and Aggressive Indent in Clojure mode.
+             (add-hook 'clojure-mode-hook #'paredit-mode)
+             (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
 
   ;;; Customize indentation like this:
   ;;;
@@ -68,104 +68,102 @@
   ;;; (:keyword
   ;;;   map)
 
-  (setq clojure-indent-style ':align-arguments)
+             (setq clojure-indent-style ':align-arguments)
 
-  ;; We can't use define-clojure-indent here, due to a perverse
-  ;; threefold conspiracy perpetrated by dash.el, recursive
-  ;; macroexpansion, and the Gilardi scenario. See [1].
-  ;;
-  ;; Ideally, we would be able to set the identation rules for
-  ;; *all* keywords at the same time. But until we figure out how
-  ;; to do that, we just have to deal with every keyword
-  ;; individually. See issue [2].
-  ;;
-  ;; [1]: http://emacs.stackexchange.com/q/26261/12534
-  ;; [2]: https://github.com/raxod502/radian/issues/26
-  (dolist (spec '((-> 1)
-                  (->> 1)
-                  (:import 0)
-                  (:require 0)
-                  (:use 0)))
-    (put-clojure-indent (car spec) (cdr spec)))
+             ;; We can't use define-clojure-indent here, due to a perverse
+             ;; threefold conspiracy perpetrated by dash.el, recursive
+             ;; macroexpansion, and the Gilardi scenario. See [1].
+             ;;
+             ;; Ideally, we would be able to set the identation rules for
+             ;; *all* keywords at the same time. But until we figure out how
+             ;; to do that, we just have to deal with every keyword
+             ;; individually. See issue [2].
+             ;;
+             ;; [1]: http://emacs.stackexchange.com/q/26261/12534
+             ;; [2]: https://github.com/raxod502/radian/issues/26
+             (dolist (spec '((:import 0)
+                             (:require 0)
+                             (:use 0)))
+               (put-clojure-indent (car spec) (cdr spec)))
 
-  ;; `clojure-mode' does not correctly identify the docstrings of
-  ;; protocol methods as docstrings, and as such electric and
-  ;; aggressive indentation do not work for them. Additionally, when
-  ;; you hack a clojure.core function, such as defonce or defrecord,
-  ;; to provide docstring functionality, those docstrings are
-  ;; (perhaps rightly, but annoyingly) not recognized as docstrings
-  ;; either. However, there is an easy way to get electric indentation
-  ;; working for all potential docstrings: simply tell `clojure-mode'
-  ;; that *all* strings are docstrings. This will not change the font
-  ;; locking, because for some weird reason `clojure-mode' determines
-  ;; whether you're in a docstring by the font color instead of the
-  ;; other way around. Note that this will cause electric indentation
-  ;; by two spaces in *all* multiline strings, but since there are not
-  ;; very many non-docstring multiline strings in Clojure this is not
-  ;; too inconvenient. (And, after all, it's only electric, not
-  ;; aggressive, indentation.)
+             ;; `clojure-mode' does not correctly identify the docstrings of
+             ;; protocol methods as docstrings, and as such electric and
+             ;; aggressive indentation do not work for them. Additionally, when
+             ;; you hack a clojure.core function, such as defonce or defrecord,
+             ;; to provide docstring functionality, those docstrings are
+             ;; (perhaps rightly, but annoyingly) not recognized as docstrings
+             ;; either. However, there is an easy way to get electric indentation
+             ;; working for all potential docstrings: simply tell `clojure-mode'
+             ;; that *all* strings are docstrings. This will not change the font
+             ;; locking, because for some weird reason `clojure-mode' determines
+             ;; whether you're in a docstring by the font color instead of the
+             ;; other way around. Note that this will cause electric indentation
+             ;; by two spaces in *all* multiline strings, but since there are not
+             ;; very many non-docstring multiline strings in Clojure this is not
+             ;; too inconvenient. (And, after all, it's only electric, not
+             ;; aggressive, indentation.)
 
-  ;; Unfortunately, `clojure-in-docstring-p' is defined as an inline
-  ;; function, so we can't override it. Instead, we replace
-  ;; `clojure-indent-line'. But inside a new minor mode, so that the
-  ;; user can toggle it if they need to use `aggressive-indent-mode'
-  ;; and multiline strings that are not docstrings at the same time.
+             ;; Unfortunately, `clojure-in-docstring-p' is defined as an inline
+             ;; function, so we can't override it. Instead, we replace
+             ;; `clojure-indent-line'. But inside a new minor mode, so that the
+             ;; user can toggle it if they need to use `aggressive-indent-mode'
+             ;; and multiline strings that are not docstrings at the same time.
 
-  (define-minor-mode radian-clojure-strings-as-docstrings-mode
-    "Treat all Clojure strings as docstrings.
+             (define-minor-mode radian-clojure-strings-as-docstrings-mode
+               "Treat all Clojure strings as docstrings.
 You want to turn this off if you have multiline strings that are
 not docstrings."
-    nil nil nil
-    (if radian-clojure-strings-as-docstrings-mode
-        (progn
-          (el-patch-defsubst clojure-in-docstring-p ()
-            "Check whether point is in a docstring."
-            (el-patch-wrap 1 1
-              (or
-               (eq (get-text-property (point) 'face) 'font-lock-doc-face)
-               (eq (get-text-property (point) 'face) 'font-lock-string-face))))
-          (el-patch-defun clojure-indent-line ()
-            "Indent current line as Clojure code."
-            (if (clojure-in-docstring-p)
-                (save-excursion
-                  (beginning-of-line)
-                  (when (and (looking-at "^\\s-*")
-                             (<= (string-width (match-string-no-properties 0))
-                                 (string-width (clojure-docstring-fill-prefix))))
-                    (replace-match (clojure-docstring-fill-prefix))))
-              (lisp-indent-line))))
-      (el-patch-unpatch 'clojure-in-docstring-p 'defsubst)
-      (el-patch-unpatch 'clojure-indent-line 'defun)))
+               nil nil nil
+               (if radian-clojure-strings-as-docstrings-mode
+                   (progn
+                     (el-patch-defsubst clojure-in-docstring-p ()
+                                        "Check whether point is in a docstring."
+                                        (el-patch-wrap 1 1
+                                                       (or
+                                                        (eq (get-text-property (point) 'face) 'font-lock-doc-face)
+                                                        (eq (get-text-property (point) 'face) 'font-lock-string-face))))
+                     (el-patch-defun clojure-indent-line ()
+                                     "Indent current line as Clojure code."
+                                     (if (clojure-in-docstring-p)
+                                         (save-excursion
+                                           (beginning-of-line)
+                                           (when (and (looking-at "^\\s-*")
+                                                      (<= (string-width (match-string-no-properties 0))
+                                                          (string-width (clojure-docstring-fill-prefix))))
+                                             (replace-match (clojure-docstring-fill-prefix))))
+                                       (lisp-indent-line))))
+                 (el-patch-unpatch 'clojure-in-docstring-p 'defsubst)
+                 (el-patch-unpatch 'clojure-indent-line 'defun)))
 
-  (add-hook 'clojure-mode-hook #'radian-clojure-strings-as-docstrings-mode)
+             (add-hook 'clojure-mode-hook #'radian-clojure-strings-as-docstrings-mode)
 
-  ;; Improve the performance of `clojure-project-dir' by memoizing it.
-  ;; This alleviates some quite horrible lag generated by CIDER
-  ;; calling this function continually.
+             ;; Improve the performance of `clojure-project-dir' by memoizing it.
+             ;; This alleviates some quite horrible lag generated by CIDER
+             ;; calling this function continually.
 
-  (defvar clojure-project-dir-cache (make-hash-table :test 'equal))
+             (defvar clojure-project-dir-cache (make-hash-table :test 'equal))
 
-  (el-patch-defun clojure-project-dir (&optional dir-name)
-    "Return the absolute path to the project's root directory.
+             (el-patch-defun clojure-project-dir (&optional dir-name)
+                             "Return the absolute path to the project's root directory.
 
 Use `default-directory' if DIR-NAME is nil.
 Return nil if not inside a project."
-    (el-patch-let (($dir-name (dir-name (or dir-name default-directory)))
-                   ($choices (choices (delq nil
-                                            (mapcar (lambda (fname)
-                                                      (locate-dominating-file dir-name fname))
-                                                    clojure-build-tool-files))))
-                   ($body (when (> (length choices) 0)
-                            (car (sort choices #'file-in-directory-p)))))
-      (el-patch-swap
-        (let* ($dir-name
-               $choices)
-          $body)
-        (let ($dir-name)
-          (or (gethash dir-name clojure-project-dir-cache)
-              (puthash dir-name
-                       (let ($choices) $body)
-                       clojure-project-dir-cache)))))))
+                             (el-patch-let (($dir-name (dir-name (or dir-name default-directory)))
+                                            ($choices (choices (delq nil
+                                                                     (mapcar (lambda (fname)
+                                                                               (locate-dominating-file dir-name fname))
+                                                                             clojure-build-tool-files))))
+                                            ($body (when (> (length choices) 0)
+                                                     (car (sort choices #'file-in-directory-p)))))
+                                           (el-patch-swap
+                                            (let* ($dir-name
+                                                   $choices)
+                                              $body)
+                                            (let ($dir-name)
+                                              (or (gethash dir-name clojure-project-dir-cache)
+                                                  (puthash dir-name
+                                                           (let ($choices) $body)
+                                                           clojure-project-dir-cache)))))))
 
 ;; Provides Clojure and ClojureScript REPL integration, including
 ;; documentation and source lookups, among many other features.
