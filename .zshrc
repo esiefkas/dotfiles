@@ -207,3 +207,20 @@ if [[ -f ~/.zshrc.local ]]; then
 fi
 
 alias emacs='emacs -nw'
+
+export VAULT_ADDR=https://thinktopic.com:8200
+export VAULT_GITHUB_TOKEN=c28ce9151dd1254757994833a9258f2ae0ab18a1
+
+vault auth -method=github token=c28ce9151dd1254757994833a9258f2ae0ab18a1
+
+# added by travis gem
+[ -f /home/esiefkas/.travis/travis.sh ] && source /home/esiefkas/.travis/travis.sh
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/home/esiefkas/google-cloud-sdk/path.zsh.inc' ]; then source '/home/esiefkas/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/home/esiefkas/google-cloud-sdk/completion.zsh.inc' ]; then source '/home/esiefkas/google-cloud-sdk/completion.zsh.inc'; fi
