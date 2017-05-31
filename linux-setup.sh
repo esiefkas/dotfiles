@@ -58,12 +58,19 @@ wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
 sudo mv lein /bin
 sudo chmod a+x /bin/lein
 
+#install ag#
+sudo apt-get -y install silversearcher-ag
+
+#install xclip#
+sudo apt-get -y install xclip
+
 #install emacs*
 sudo apt-get -y install emacs
-ln -s ./radian-emacs ~/.emacs.d/radian
-ln -s ./init.el ~/.emacs.d/init.el
-ln -s ./init.before.local.el ~/.emacs.d/init.before.local.el
-ln -s ./init.local.el ~/.emacs.d/init.local.el
+mkdir -p ~/.emacs.d
+ln -s $PWD/radian-emacs ~/.emacs.d/radian
+ln -s $PWD/init.el ~/.emacs.d/init.el
+ln -s $PWD/init.before.local.el ~/.emacs.d/init.before.local.el
+ln -s $PWD/init.local.el ~/.emacs.d/init.local.el
 
 ### Cleanup ###
 trap EXIT
