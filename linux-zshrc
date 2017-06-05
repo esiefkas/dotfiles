@@ -1,0 +1,17 @@
+# zsh shell config
+
+#zplug init
+source ~/.zplug/init.zsh
+
+#init theme
+zplug "esiefkas/403fbe27a115f9869b8835f5d2dd4d24", from:gist, as:theme, use:git-taculous.zsh-theme
+
+#other plugins go here
+zplug "plugins/docker", from:oh-my-zsh
+zplug "plugins/lein", from:oh-my-zsh
+zplug "plugins/vault", from:oh-my-zsh # Completion for vault
+zplug "zsh-users/zsh-autosuggestions" # Autosuggestions from history
+
+
+#load all plugins
+zplug load

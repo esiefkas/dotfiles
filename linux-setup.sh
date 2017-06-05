@@ -45,13 +45,15 @@ sudo apt-get -y install oracle-java8-installer
 
 #install zsh#
 sudo apt-get -y install zsh
+ln -s $PWD/linux-zshrc ~/.zshrc
 
 # TODO: handle doing this shell switch automatically
 # TODO: add zplug
-#chsh -s $(which zsh)
+chsh -s $(which zsh)
 
 #install tmux#
 sudo apt-get -y install tmux
+ln -s $PWD/.tmux.conf ~/.tmux.conf
 
 #install lein#
 wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
