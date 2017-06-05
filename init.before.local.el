@@ -28,3 +28,5 @@
 ;;; however, here is how you can disable Aggressive Indent:
 ;;;
 ;;; (radian-disable-package 'aggressive-indent)
+
+(radian-disable-package 'aggressive-indent)

@@ -1,10 +1,15 @@
-;;; This file is run at the very end of init.el, so you can use it to
-;;; override things or add your own packages and customizations.
+;; This file is run at the very end of init.el, so you can use it to
+;; override things or add your own packages and customizations.
 (use-package xclip)
 (xclip-mode 1)
 
-(require 'windsize)
-(windsize-default-keybindings)
+;;prereq packages for magit
+(use-package dash)
+(use-package with-editor)
+(use-package magit)
+
+;; (require 'windsize)
+;; (windsize-default-keybindings)
 
 ;;project level search with projectile
 (use-package projectile)

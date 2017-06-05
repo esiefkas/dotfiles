@@ -38,7 +38,7 @@
       (require 'subr-x)
 
       ;; Load local customizations.
-      (load radian-local-init-file 'noerror 'nomessage)
+
 
       ;; Make the Radian libraries available.
       (add-to-list 'load-path radian-directory)
@@ -84,6 +84,8 @@
         (let ((straight-current-profile 'radian-local))
           (when (fboundp 'radian-after-init)
             (radian-after-init)))
+
+        (load radian-local-init-file 'noerror 'nomessage)
 
         ;; This helps out the package management system. See the
         ;; documentation on `straight-declare-init-succeeded'.
